@@ -1,0 +1,49 @@
+version : '3.8'
+
+services:
+
+  #database service
+    mongo: 
+      image: mongo:latest
+      container_name: mongodb
+      volumes:
+        - ./data/mongo_data:/data/db
+      ports:
+        - "27017:27017"
+      # If db container is down , docker-compose will restart it automatically
+      restart: always
+
+    mongo_express:
+      image: mongo-express:latest
+      container_name: mongo_express
+      # environment:
+      #   - ME_CONFIG_MONGODB_SERVER=mongo
+      ports:
+        - "8081:8081"
+
+    api:
+      build: ./flask_app
+      container_name: flask_api
+      ports:
+        - "5000:5000"
+      depends_on:
+        - mongo
+
+    streamlit:
+      build: ./streamlit_app
+      container_name: streamlit_app
+      ports:
+        - "8501:8501"
+      depends_on:
+        - api
+
+    jupyter:
+      build: ./jupyter
+      container_name: jupyter
+      ports:
+        - "8888:8888"
+      volumes:
+        - ./data/mongo_data:/data/db
+
+volumes:
+  data : {}

@@ -1,0 +1,4 @@
+notebook== latest
+pymongo== latest
+pandas== lates
+numpy== latest
